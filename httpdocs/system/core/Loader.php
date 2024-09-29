@@ -51,6 +51,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class CI_Loader {
 
+	public $benchmark;
+	public $hooks;
+	public $config;
+	public $log;
+	public $utf8;
+	public $router;
+	public $output;
+	public $security;
+	public $input;
+	public $lang;
+	public $Logging_model;
+	public $load;
+	public $uri;
+	public $migration;
+
 	// All these are set automatically. Don't mess with them.
 	/**
 	 * Nesting level of the output buffering mechanism
