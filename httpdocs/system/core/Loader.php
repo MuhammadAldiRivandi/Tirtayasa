@@ -65,6 +65,7 @@ class CI_Loader {
 	public $load;
 	public $uri;
 	public $migration;
+	public $db;
 
 	// All these are set automatically. Don't mess with them.
 	/**
@@ -390,7 +391,7 @@ class CI_Loader {
 	 *					FALSE on failure, CI_Loader instance in any other case
 	 */
 	public function database($params = '', $return = FALSE, $query_builder = NULL)
-	{
+	{	
 		// Grab the super object
 		$CI =& get_instance();
 

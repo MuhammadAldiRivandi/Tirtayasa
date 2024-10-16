@@ -3,6 +3,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Api extends CI_Controller {
 
+	public $cache;
+	public $db;
+	public $Api_model;
+	public $Cache_model;
+
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('Api_model');

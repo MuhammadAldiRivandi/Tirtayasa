@@ -1,10 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$config['google-server-key'] = 'FILLME';
-$config['scheduled-secret'] = 'FILLME';
-$config['cicaheumledeng-key'] = 'FILLME';
-$config['mapbox-token'] = 'FILLME';
+$config['google-server-key'] = '';
+$config['scheduled-secret'] = '';
+$config['cicaheumledeng-key'] = '';
+$config['mapbox-token'] = 'pk.eyJ1IjoicGFzY2FsdW5wYXIiLCJhIjoiY20wbmptMjEwMDNwYTJqc2R3djV4eG8wdyJ9.k4Y20k7fZmfG3IyJYM2gKA';
 
 // E-mail
 $config['email-config'] = Array(
@@ -17,4 +17,4 @@ $config['email-config'] = Array(
     'charset' => 'iso-8859-1'
 );
 
-$config['url-menjangan'] = 'http://newmenjangan.cloudapp.net:8000';
+$config['url-menjangan'] = 'http://localhost:8000';

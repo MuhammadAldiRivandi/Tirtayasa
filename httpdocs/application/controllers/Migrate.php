@@ -4,6 +4,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Migrate extends CI_Controller {
 
+    public $migration;
+    public $db;
+    public $dbforge;
     /**
      * Jika dibuka di http://localhost/migrate akan mengupdate ke db terbaru.
      * Jika ada data sendiri, mohon dibackup dulu.
