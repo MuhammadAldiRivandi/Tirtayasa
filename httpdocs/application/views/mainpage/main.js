@@ -142,22 +142,26 @@ $(document).ready(function () {
 	 * Check if coordinates are complete. If yes, then start routing.
 	 * @param coordinates the coordinates to check.
 	 */
-	 function checkCoordinatesThenRoute(coordinates) {
-	 	if (coordinates['start'] != null && coordinates['finish'] != null) {
-	 		protocol.findRoute(
-	 			coordinates['start'],
-	 			coordinates['finish'],
-	 			'<?=$locale?>',
-	 			function (results) {
-	 				if (results.status === 'ok') {
-	 					showRoutingResults(results);
-	 				} else {
-	 					clearSecondaryAlerts();
-	 					showAlert('<?=$this->lang->line("Connection problem")?>', 'alert');
-	 				}
-	 			});
-	 	}
-	 }
+	function checkCoordinatesThenRoute(coordinates) {
+		if (coordinates['start'] != null && coordinates['finish'] != null) {
+			
+			protocol.findRoute(
+				coordinates['start'],
+				coordinates['finish'],
+				$('#algoselect').val(),
+				'<?=$locale?>',
+				function (results) {
+					if (results.status === 'ok') {
+						showRoutingResults(results);
+					} else {
+						clearSecondaryAlerts();
+						showAlert('<?=$this->lang->line("Connection problem")?>', 'alert');
+					}
+				}
+			);
+		}
+	}
+	
 
 	 function clearRoutingResultsOnMap() {
 	 	updateRegion(region, false);

@@ -1,14 +1,16 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Api extends CI_Controller {
+class Api extends CI_Controller
+{
 
 	public $cache;
 	public $db;
 	public $Api_model;
 	public $Cache_model;
 
-	public function __construct() {
+	public function __construct()
+	{
 		parent::__construct();
 		$this->load->model('Api_model');
 		$this->load->model('Cache_model');
@@ -56,13 +58,15 @@ class Api extends CI_Controller {
 		}
 	}
 
-	public function _findroute($version, $apikey) {
+	public function _findroute($version, $apikey)
+	{
 		$start = $this->Api_model->getInput('start');
 		$finish = $this->Api_model->getInput('finish');
+		$algo = $this->Api_model->getInput('algo');
 		$locale = $this->Api_model->getInput('locale');
 
 		$language = $this->config->item('languages')[$locale];
-		if (is_null($language))	{
+		if (is_null($language)) {
 			throw new Exception("400 Locale not found: $locale");
 		}
 		$this->lang->load('tirtayasa', $language['file']);
@@ -78,7 +82,7 @@ class Api extends CI_Controller {
 			$alternatives = $this->config->item('routing-alternatives');
 			$count = $presentation === 'mobile' ? 1 : sizeof($alternatives);
 			for ($i = 0; $i < $count; $i++) {
-				$url = $this->config->item('url-menjangan') . "/?start=$start&finish=$finish";
+				$url = $this->config->item('url-menjangan') . "/?start=$start&finish=$finish&algo=$algo";
 				$url .= '&' . 'mw' . '=' . $alternatives[$i]['mw'];
 				$url .= '&' . 'wm' . '=' . $alternatives[$i]['wm'];
 				$url .= '&' . 'pt' . '=' . $alternatives[$i]['pt'];
@@ -87,7 +91,7 @@ class Api extends CI_Controller {
 					throw new Exception("There's an error while reading the menjangan response.");
 				}
 				$results[$result] = true;
-			}		
+			}
 		} else {
 			$result = file_get_contents($this->config->item('url-menjangan') . "/?start=$start&finish=$finish");
 			if ($result === FALSE) {
@@ -96,7 +100,7 @@ class Api extends CI_Controller {
 			$results[$result] = true;
 		}
 
-		foreach ($results as $result=>$dummy) {
+		foreach ($results as $result => $dummy) {
 			$travel_time = 0;
 			$route_output = array();
 			$steps = explode("\n", $result);
@@ -134,7 +138,7 @@ class Api extends CI_Controller {
 						$points[$i] = $finish;
 					}
 				}
-		
+
 				// Construct the human readable form of the walk
 				$humanized_from = $this->Api_model->humanizePoint($from);
 				$humanized_to = $this->Api_model->humanizePoint($to);
@@ -176,7 +180,7 @@ class Api extends CI_Controller {
 					$humanreadable = str_replace('%distance', $this->Api_model->formatDistance($distance), $humanreadable);
 					$humanreadable = str_replace('%trackname', $trackDetail->trackName, $humanreadable);
 					$humanreadable = str_replace('%tracktype', $trackDetail->trackTypeName, $humanreadable);
-					
+
 					$travel_time += $distance / intval($trackDetail->speed);
 					if (!is_null($trackDetail->ticketURL) && !is_null($trackDetail->extraParameters)) {
 						$booking_url = $trackDetail->ticketURL . $trackDetail->extraParameters;
@@ -197,30 +201,31 @@ class Api extends CI_Controller {
 			$routing_result['traveltime'] = $this->Api_model->formatTravelTime($travel_time);
 			$routing_results[] = $routing_result;
 		}
-		
+
 		//input log statistic
 		$this->Logging_model->logStatistic($apikey, 'FINDROUTE', "$start/$finish/" . sizeof($results));
-		
+
 		if (!is_null($version) && $version >= 2) {
 			$json_output = array(
-					'status' => 'ok',
-					'routingresults' => $routing_results
+				'status' => 'ok',
+				'routingresults' => $routing_results
 			);
 		} else {
 			$json_output = array(
-					'status' => 'ok',
-					'routingresult' => $routing_results[0]['steps'],
-					'traveltime' => $routing_results[0]['traveltime']
+				'status' => 'ok',
+				'routingresult' => $routing_results[0]['steps'],
+				'traveltime' => $routing_results[0]['traveltime']
 			);
 		}
 		$this->Api_model->outputJson($json_output);
 	}
 
-	public function _searchplace($version, $apikey) {
+	public function _searchplace($version, $apikey)
+	{
 		$querystring = $this->Api_model->getInput('querystring');
 		$region = $this->Api_model->getInput('region', $version >= 2);
 		$region = is_null($region) ? 'bdo' : $region;
-		
+
 		// Check if there is region modifier from the query string
 		$regions = $this->config->item('regions');
 		foreach ($regions as $key => $value) {
@@ -230,7 +235,7 @@ class Api extends CI_Controller {
 				break;
 			}
 		}
-		
+
 		$querystring = urlencode($querystring);
 		$cached_searchplace = $this->Cache_model->get('searchplace', "$region/$querystring");
 		if (!is_null($cached_searchplace)) {
@@ -245,7 +250,7 @@ class Api extends CI_Controller {
 			if ($result === FALSE) {
 				throw new Exception("There's an error while reading the places response ($full_url).");
 			}
-		
+
 			$json_result = json_decode($result, true);
 			if ($json_result['status'] === 'OK' || $json_result['status'] === 'ZERO_RESULTS') {
 				$search_result = array();
@@ -259,17 +264,17 @@ class Api extends CI_Controller {
 					$current_venue = $json_result['candidates'][$i];
 					$search_result[$i]['placename'] = $current_venue['name'];
 					$search_result[$i]['location'] = sprintf(
-							'%.5lf,%.5lf',
-							$current_venue['geometry']['location']['lat'],
-							$current_venue['geometry']['location']['lng']
+						'%.5lf,%.5lf',
+						$current_venue['geometry']['location']['lat'],
+						$current_venue['geometry']['location']['lng']
 					);
 				}
 				$json_output = array(
 					'status' => 'ok',
 					'searchresult' => $search_result,
-					'attributions' => isset($json_result['html_attributions'])?$json_result['html_attributions']:[]
+					'attributions' => isset($json_result['html_attributions']) ? $json_result['html_attributions'] : []
 				);
-		
+
 				//input log statistic
 				$this->Logging_model->logStatistic("$apikey", "SEARCHPLACE",  "$querystring/$size");
 				// Store to cache
@@ -283,7 +288,8 @@ class Api extends CI_Controller {
 		$this->Api_model->outputJson($json_output);
 	}
 
-	public function _nearbytransports($version, $apikey) {
+	public function _nearbytransports($version, $apikey)
+	{
 		$start = $this->Api_model->getInput('start');
 		if ($version >= 2) {
 			$lines = explode("\n", file_get_contents($this->config->item('url-menjangan') . "/?start=$start"));
@@ -302,10 +308,10 @@ class Api extends CI_Controller {
 				);
 			}
 			usort($nearby_result, "_nearbytransports_result_compare");
-			$this->Logging_model->logStatistic($apikey, "NEARBYTRANSPORTS", "$start/" . sizeof($nearby_result));		
+			$this->Logging_model->logStatistic($apikey, "NEARBYTRANSPORTS", "$start/" . sizeof($nearby_result));
 			$json_output = array(
-					'status' => 'ok',
-					'nearbytransports' => $nearby_result
+				'status' => 'ok',
+				'nearbytransports' => $nearby_result
 			);
 			$this->Api_model->outputJson($json_output);
 		} else {
@@ -320,7 +326,8 @@ class Api extends CI_Controller {
  * @param array $b an array, where index 3 is the distance
  * @return number as in usort() spec
  */
- function _nearbytransports_result_compare($a, $b) {
+function _nearbytransports_result_compare($a, $b)
+{
 	if ($a[3] > $b[3]) {
 		return +1;
 	} else if ($a[3] < $b[3]) {

@@ -25,7 +25,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			}
 		});
 	};
-	this.findRoute = function(start, finish, locale, successHandler) {
+	this.findRoute = function(start, finish, algo, locale, successHandler) {
 		$.ajax({
 			url: HANDLE_URL,
 			type: "GET",
@@ -35,6 +35,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				apikey: apikey,
 				start: start,
 				finish: finish,
+				algo: algo,
 				locale: locale,
 				presentation: "desktop"
 			},

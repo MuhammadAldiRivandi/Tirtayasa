@@ -1,8 +1,10 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Mainpage extends CI_Controller {
-	public function index() {
+class Mainpage extends CI_Controller
+{
+	public function index()
+	{
 		$this->load->config('tirtayasa');
 
 		// Setup locale
@@ -13,7 +15,7 @@ class Mainpage extends CI_Controller {
 			$this->input->set_cookie('locale', $locale, time() + 3600 * 24 * 365);
 		}
 		$this->lang->load('tirtayasa', $this->config->item('languages')[$locale]['file']);
-		
+
 		// Setup region
 		if (is_null($this->input->get('region'))) {
 			$region = $this->_getValidatedRegion($this->input->cookie('region'));
@@ -31,15 +33,15 @@ class Mainpage extends CI_Controller {
 			$startfinish = $this->input->get($endpoint);
 			if (!is_null($startfinish)) {
 				if (preg_match('/^(.+)\\/(-?[0-9.]+,-?[0-9.]+)$/', $startfinish, $matches)) {
-					$textual_endpoint [$endpoint] = $matches[1];
-					$coordinate_endpoint [$endpoint] = $matches[2];
+					$textual_endpoint[$endpoint] = $matches[1];
+					$coordinate_endpoint[$endpoint] = $matches[2];
 				} else {
-					$textual_endpoint [$endpoint] = $startfinish;
-					$coordinate_endpoint [$endpoint] = null;
+					$textual_endpoint[$endpoint] = $startfinish;
+					$coordinate_endpoint[$endpoint] = null;
 				}
 			} else {
-				$textual_endpoint [$endpoint] = null;
-				$coordinate_endpoint [$endpoint] = null;
+				$textual_endpoint[$endpoint] = null;
+				$coordinate_endpoint[$endpoint] = null;
 			}
 		}
 
@@ -55,7 +57,8 @@ class Mainpage extends CI_Controller {
 		$this->load->view('mainpage/main', $data);
 	}
 
-	public function js($name) {
+	public function js($name)
+	{
 		$this->load->config('tirtayasa');
 		$locale = $this->_getValidatedLocale($this->input->get('locale'));
 		$this->lang->load('tirtayasa', $this->config->item('languages')[$locale]['file']);
@@ -75,18 +78,19 @@ class Mainpage extends CI_Controller {
 		}
 	}
 
-	private function _getValidatedLocale($locale) {
+	private function _getValidatedLocale($locale)
+	{
 		if (is_null($locale) || !isset($this->config->item('languages')[$locale])) {
 			$locale = 'en';
 		}
-		return $locale;		
+		return $locale;
 	}
 
-	private function _getValidatedRegion($region) {
+	private function _getValidatedRegion($region)
+	{
 		if (is_null($region) || !isset($this->config->item('regions')[$region])) {
 			$region = 'bdo';
 		}
-		return $region;		
+		return $region;
 	}
-
 }
